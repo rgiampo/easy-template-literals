@@ -1,0 +1,113 @@
+{
+  "name": "easy-template-literals",
+  "displayName": "Easy Template Literals",
+  "description": "Facilita la digitazione dei template literals in JavaScript e TypeScript.",
+  "version": "0.0.1",
+  "publisher": "rgiampo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rgiampo/easy-template-literals.git"
+  },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "template literals",
+    "javascript",
+    "typescript",
+    "snippets",
+    "productivity"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact",
+    "onDidChangeConfiguration"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "easy-template-literals.helloWorld",
+        "title": "Hello World"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Impostazioni di Easy Template Literals",
+      "properties": {
+        "easyTemplateLiterals.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Abilita o disabilita l'estensione."
+        },
+        "easyTemplateLiterals.languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "javascript",
+            "typescript"
+          ],
+          "description": "Specifica i linguaggi su cui l'estensione è attiva. Ad esempio, ['javascript', 'typescript']."
+        },
+        "easyTemplateLiterals.insertPattern": {
+          "type": "string",
+          "default": "{}",
+          "description": "Il pattern da inserire dopo il simbolo '$'. Usa '|' per indicare la posizione del cursore. Ad esempio, '{|}'."
+        },
+        "easyTemplateLiterals.requireTemplateLiteral": {
+          "type": "boolean",
+          "default": true,
+          "description": "Se impostato su true, l'estensione funziona solo all'interno dei template literals."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.95.0",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "eslint": "^9.13.0",
+    "esbuild": "^0.24.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.6.3",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  },
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#37a9e0",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://img.shields.io/badge/license-MIT-green",
+      "href": "https://github.com/rgiam/easy-template-literals/blob/main/LICENSE",
+      "description": "Licenza MIT"
+    }
+  ],
+  "license": "MIT"
+}
