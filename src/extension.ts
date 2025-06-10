@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
-  // Leggi le impostazioni iniziali
+  // Read initial settings
   let config = vscode.workspace.getConfiguration("easyTemplateLiterals");
   let isEnabled = config.get<boolean>("enable", true);
   let languages = config.get<string[]>("languages", [
@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
     true
   );
 
-  // Ascolta le modifiche alla configurazione
+  // Watch for configuration changes
   vscode.workspace.onDidChangeConfiguration((event) => {
     if (event.affectsConfiguration("easyTemplateLiterals")) {
       config = vscode.workspace.getConfiguration("easyTemplateLiterals");
@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  // Listener per le modifiche al documento
+  // Document change listener
   vscode.workspace.onDidChangeTextDocument((event) => {
     if (!isEnabled) {
       return;
@@ -42,13 +42,13 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    // Verifica se il linguaggio è supportato
+    // Check if the language is supported
     const languageId = editor.document.languageId;
     if (!languages.includes(languageId)) {
       return;
     }
 
-    // Ottieni le modifiche recenti
+    // Retrieve recent changes
     const changes = event.contentChanges;
     if (changes.length === 0) {
       return;
@@ -56,21 +56,21 @@ export function activate(context: vscode.ExtensionContext) {
 
     const lastChange = changes[changes.length - 1];
 
-    // Controlla se l'utente ha digitato "$"
+    // Check if the user typed "$"
     if (lastChange.text === "$") {
       const document = editor.document;
 
-      // Calcola la posizione dopo il testo inserito
+      // Calculate the position after the inserted text
       const cursorPosition = lastChange.range.start.translate(
         0,
         lastChange.text.length
       );
 
-      // Verifica se dobbiamo inserire il pattern
+      // Determine if we should insert the pattern
       let shouldInsert = true;
 
       if (requireTemplateLiteral) {
-        // Controlla se siamo in un template literal
+        // Check if we are in a template literal
         const lineText = document.lineAt(cursorPosition.line).text;
         const textBeforeCursor = lineText.substring(
           0,
@@ -102,13 +102,13 @@ export function activate(context: vscode.ExtensionContext) {
       if (shouldInsert) {
         editor
           .edit((editBuilder) => {
-            // Sostituisci '|' con la posizione del cursore
+            // Replace '|' with the cursor position
             const cursorIndex = insertPattern.indexOf("|");
             let textToInsert = insertPattern.replace("|", "");
             editBuilder.insert(cursorPosition, textToInsert);
           })
           .then(() => {
-            // Posiziona il cursore nel punto specificato
+            // Move the cursor to the specified position
             const cursorIndex = insertPattern.indexOf("|");
             const offset =
               cursorIndex >= 0
