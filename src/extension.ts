@@ -1,5 +1,8 @@
 import * as vscode from "vscode";
 
+let configChangeDisposable: vscode.Disposable | undefined;
+let textDocumentChangeDisposable: vscode.Disposable | undefined;
+
 export function activate(context: vscode.ExtensionContext) {
   // Leggi le impostazioni iniziali
   let config = vscode.workspace.getConfiguration("easyTemplateLiterals");
@@ -15,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // Ascolta le modifiche alla configurazione
-  vscode.workspace.onDidChangeConfiguration((event) => {
+  configChangeDisposable = vscode.workspace.onDidChangeConfiguration((event) => {
     if (event.affectsConfiguration("easyTemplateLiterals")) {
       config = vscode.workspace.getConfiguration("easyTemplateLiterals");
       isEnabled = config.get<boolean>("enable", true);
@@ -32,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   // Listener per le modifiche al documento
-  vscode.workspace.onDidChangeTextDocument((event) => {
+  textDocumentChangeDisposable = vscode.workspace.onDidChangeTextDocument((event) => {
     if (!isEnabled) {
       return;
     }
@@ -120,6 +123,14 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
   });
+
+  context.subscriptions.push(
+    configChangeDisposable,
+    textDocumentChangeDisposable,
+  );
 }
 
-export function deactivate() {}
+export function deactivate() {
+  configChangeDisposable?.dispose();
+  textDocumentChangeDisposable?.dispose();
+}
